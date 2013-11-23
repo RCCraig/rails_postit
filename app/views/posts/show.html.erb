@@ -1,0 +1,47 @@
+<p class='pull-right'>
+<% if logged_in? %>
+ [<%= link_to 'Edit this Post', edit_post_path(@post) %>]
+ <% end %>
+</p>
+<p>
+  <%= render @post.categories %>
+</p>
+<%= render 'shared/content_title', title: @post.title %>
+<p>
+  <%= @post.description %>
+</p>
+<hr/>
+
+<% if logged_in? %>
+  <%= form_for [@post, @comment] do |f| %>
+  <%= render 'shared/errors', obj: @comment %>
+  <div class='control-group'>
+    <%= f.label :body, 'Comment:' %>
+    <%= f.text_area :body, rows: 3, class: 'span4' %>
+  </div>
+  <%= f.submit "Create a Comment", class: "btn btn-primary" %>
+  <% end %>
+<% end %>
+
+<h5>Comments</h5>
+
+<% @post.comments.each do |comment| %>
+  <div class="row">
+    <div class='span0 well text-center'>
+    <% if logged_in? %>
+    <%= link_to vote_post_comment_path(@post, comment,  vote: true), method: 'post', remote: true do %>    
+      <i class="icon-thumbs-up"></i>
+    <% end %>
+  <% end %>
+    <br/>
+    <span id='comment_<%= comment.id %>_votes'><%= comment.total_votes %></span>
+    <br/>
+    <% if logged_in? %>
+    <%= link_to  vote_post_comment_path(@post, comment,  vote: false), method: 'post', remote: true do %>    
+      <i class='icon-thumbs-down'></i>
+    <% end %>
+   <% end %>   
+  </div>
+  <%= render 'comments/comment', comment: comment %>
+ </div>
+<% end %>
